@@ -14,6 +14,11 @@ const attendancePolicyRoutes =
 require(
 "./modules/attendance-policy/attendancePolicy.routes"
 );
+
+const reportsRoutes =
+require(
+  "./modules/reports/reports.routes"
+);
 const app = express();
 
 app.use(express.json());
@@ -34,7 +39,10 @@ app.use(
   "/api/attendance-policy",
   attendancePolicyRoutes
 );
-
+app.use(
+  "/api/reports",
+  reportsRoutes
+);
 app.get("/", (req, res) => {
   res.send("HR System API Running");
 });

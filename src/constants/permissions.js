@@ -21,7 +21,8 @@ const PERMISSIONS = {
   CREATE_SHIFT: "create_shift",
   VIEW_SHIFTS: "view_shifts",
   UPDATE_SHIFT: "update_shift",
-  DELETE_SHIFT: "delete_shift"
+  DELETE_SHIFT: "delete_shift",
+  ASSIGN_SHIFT: "assign_shift",
 
 };
 
