@@ -376,7 +376,324 @@ if (
   }
 };
 
+// =========================
+// Get All Attendances
+// =========================
+
+const getAttendances = async (
+  req,
+  res
+) => {
+
+  try {
+
+    const attendances =
+      await Attendance.find({
+
+        schoolId:
+          req.user.schoolId
+
+      })
+
+      .populate(
+        "employeeId",
+        "firstName lastName employeeId"
+      )
+
+      .populate(
+        "shiftId",
+        "name startTime endTime"
+      )
+
+      .sort({
+        shiftDate: -1
+      });
+
+    res.status(200).json({
+
+      count:
+        attendances.length,
+
+      attendances
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+
+      message:
+        error.message
+    });
+  }
+};
+
+// =========================
+// Get Single Attendance
+// =========================
+
+const getSingleAttendance =
+  async (req, res) => {
+
+    try {
+
+      const attendance =
+        await Attendance.findOne({
+
+          _id: req.params.id,
+
+          schoolId:
+            req.user.schoolId
+
+        })
+
+        .populate(
+          "employeeId",
+          "firstName lastName employeeId"
+        )
+
+        .populate(
+          "shiftId",
+          "name startTime endTime"
+        );
+
+      if (!attendance) {
+
+        return res.status(404).json({
+
+          message:
+            "Attendance not found"
+        });
+      }
+
+      res.status(200).json({
+        attendance
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+
+        message:
+          error.message
+      });
+    }
+};
+
+// =========================
+// Daily Attendance Report
+// =========================
+
+const getDailyReport =
+  async (req, res) => {
+
+    try {
+
+      const today =
+        new Date();
+
+      const startOfDay =
+        new Date(today);
+
+      startOfDay.setHours(
+        0, 0, 0, 0
+      );
+
+      const endOfDay =
+        new Date(today);
+
+      endOfDay.setHours(
+        23, 59, 59, 999
+      );
+
+      // Today's Attendances
+      const attendances =
+        await Attendance.find({
+
+          schoolId:
+            req.user.schoolId,
+
+          shiftDate: {
+            $gte: startOfDay,
+            $lte: endOfDay
+          }
+        });
+
+      // Total Active Employees
+      const totalEmployees =
+        await Employee.countDocuments({
+
+          schoolId:
+            req.user.schoolId,
+
+          isActive: true
+        });
+
+      // Present Employees
+      const present =
+        attendances.length;
+
+      // Late Employees
+      const late =
+        attendances.filter(
+
+          attendance =>
+
+            attendance.lateMinutes > 0
+
+        ).length;
+
+      // Early Leave Employees
+      const earlyLeave =
+        attendances.filter(
+
+          attendance =>
+
+            attendance.earlyLeaveMinutes > 0
+
+        ).length;
+
+      // Absent Employees
+      const absent =
+        totalEmployees - present;
+
+      res.status(200).json({
+
+        date:
+          startOfDay,
+
+        totalEmployees,
+
+        present,
+
+        absent,
+
+        late,
+
+        earlyLeave
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        message:
+          error.message
+      });
+    }
+};
+
+
+// =========================
+// Monthly Attendance Report
+// =========================
+
+const getMonthlyReport =
+  async (req, res) => {
+
+    try {
+
+      const today =
+        new Date();
+
+      const currentMonth =
+        today.getMonth();
+
+      const currentYear =
+        today.getFullYear();
+
+      const startOfMonth =
+        new Date(
+          currentYear,
+          currentMonth,
+          1
+        );
+
+      const endOfMonth =
+        new Date(
+          currentYear,
+          currentMonth + 1,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+
+      const attendances =
+        await Attendance.find({
+
+          schoolId:
+            req.user.schoolId,
+
+          shiftDate: {
+            $gte: startOfMonth,
+            $lte: endOfMonth
+          }
+        });
+
+      const totalAttendances =
+        attendances.length;
+
+      const lateCount =
+        attendances.filter(
+
+          attendance =>
+
+            attendance.lateMinutes > 0
+
+        ).length;
+
+      const earlyLeaveCount =
+        attendances.filter(
+
+          attendance =>
+
+            attendance.earlyLeaveMinutes > 0
+
+        ).length;
+
+      const overtimeCount =
+        attendances.filter(
+
+          attendance =>
+
+            attendance.overtimeMinutes > 0
+
+        ).length;
+
+      res.status(200).json({
+
+        month:
+          currentMonth + 1,
+
+        year:
+          currentYear,
+
+        totalAttendances,
+
+        lateCount,
+
+        earlyLeaveCount,
+
+        overtimeCount
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+
+        message:
+          error.message
+      });
+    }
+};
+
 module.exports = {
   checkIn,
-  checkOut
+   checkOut,
+  getAttendances,
+  getSingleAttendance,
+  getDailyReport,
+  getMonthlyReport
+ 
 };
+   

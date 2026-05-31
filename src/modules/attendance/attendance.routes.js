@@ -18,10 +18,16 @@ const PERMISSIONS = require(
 
 const {
   checkIn,
-  checkOut
+  checkOut,
+  getAttendances,
+  getSingleAttendance,
+   getDailyReport,
+  getMonthlyReport
 } = require(
   "./attendance.controller"
 );
+
+
 
 router.post(
   "/check-in",
@@ -41,5 +47,55 @@ router.post(
 
   checkOut
 );
+
+router.get(
+  "/",
+
+  authMiddleware,
+
+  authorize(
+    PERMISSIONS.VIEW_ATTENDANCE
+  ),
+
+  getAttendances
+);
+
+ router.get(
+  "/report/daily",
+
+  authMiddleware,
+
+  authorize(
+    PERMISSIONS.VIEW_ATTENDANCE
+  ),
+
+  getDailyReport
+);
+
+router.get(
+  "/report/monthly",
+
+  authMiddleware,
+
+  authorize(
+    PERMISSIONS.VIEW_ATTENDANCE
+  ),
+
+  getMonthlyReport
+);
+
+router.get(
+  "/:id",
+
+  authMiddleware,
+
+  authorize(
+    PERMISSIONS.VIEW_ATTENDANCE
+  ),
+
+  getSingleAttendance
+);
+
+
 
 module.exports = router;
