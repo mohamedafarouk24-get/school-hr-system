@@ -15,10 +15,23 @@ const generateAttendanceReport =
       employeeId,
       department,
       position,
-      lateOnly
+      lateOnly,
+      shiftId,
+      earlyLeaveOnly,
+      overtimeOnly
     } = filters;
 
     const query = {};
+
+    // =========================
+// Shift Filter
+// =========================
+
+if (shiftId) {
+
+  query.shiftId =
+    shiftId;
+}
 
     // =========================
     // Date Range Filter
@@ -63,6 +76,46 @@ const generateAttendanceReport =
         $gt: 0
       };
     }
+     
+// =========================
+// Early Leave Only
+// =========================
+
+if (
+  earlyLeaveOnly === "true"
+) {
+
+  query.earlyLeaveMinutes = {
+    $gt: 0
+  };
+}
+
+// =========================
+// Overtime Only
+// =========================
+
+if (
+  overtimeOnly === "true"
+) {
+
+  query.overtimeMinutes = {
+    $gt: 0
+  };
+}
+
+// =========================
+// Overtime Only
+// =========================
+
+if (
+  overtimeOnly === "true"
+) {
+
+  query.overtimeMinutes = {
+    $gt: 0
+  };
+}
+
 
     // =========================
     // Get Attendances
