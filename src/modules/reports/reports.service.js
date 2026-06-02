@@ -6,11 +6,6 @@ const Employee = require(
   "../employees/employee.model"
 );
 
-console.log(
-  "Attendance Model Loaded:",
-  Attendance.modelName
-);
-
 const generateAttendanceReport =
   async (filters) => {
 
@@ -25,30 +20,41 @@ const generateAttendanceReport =
 
     const query = {};
 
+    // =========================
     // Date Range Filter
+    // =========================
+
     if (from || to) {
 
       query.shiftDate = {};
 
       if (from) {
+
         query.shiftDate.$gte =
           new Date(from);
       }
 
       if (to) {
+
         query.shiftDate.$lte =
           new Date(to);
       }
     }
 
+    // =========================
     // Employee Filter
+    // =========================
+
     if (employeeId) {
 
       query.employeeId =
         employeeId;
     }
 
-    // Late Filter
+    // =========================
+    // Late Employees Only
+    // =========================
+
     if (
       lateOnly === "true"
     ) {
@@ -58,45 +64,71 @@ const generateAttendanceReport =
       };
     }
 
-    
+    // =========================
+    // Get Attendances
+    // =========================
+
+    const attendances =
+      await Attendance.find(
+        query
+      );
+
+    // =========================
+    // Summary
+    // =========================
 
     const lateCount =
-  attendances.filter(
-    a => a.lateMinutes > 0
-  ).length;
+      attendances.filter(
 
-const earlyLeaveCount =
-  attendances.filter(
-    a => a.earlyLeaveMinutes > 0
-  ).length;
+        attendance =>
 
-const overtimeCount =
-  attendances.filter(
-    a => a.overtimeMinutes > 0
-  ).length;
+          attendance.lateMinutes > 0
 
-return {
+      ).length;
 
-  summary: {
+    const earlyLeaveCount =
+      attendances.filter(
 
-    totalRecords:
-      attendances.length,
+        attendance =>
 
-    lateCount,
+          attendance.earlyLeaveMinutes > 0
 
-    earlyLeaveCount,
+      ).length;
 
-    overtimeCount
-  },
+    const overtimeCount =
+      attendances.filter(
 
-  filters,
+        attendance =>
 
-  records:
-    attendances
-};
+          attendance.overtimeMinutes > 0
+
+      ).length;
+
+    // =========================
+    // Response
+    // =========================
+
+    return {
+
+      summary: {
+
+        totalRecords:
+          attendances.length,
+
+        lateCount,
+
+        earlyLeaveCount,
+
+        overtimeCount
+      },
+
+      filters,
+
+      records:
+        attendances
+    };
 };
 
 module.exports = {
-  generateAttendanceReport,
-    
+  generateAttendanceReport
 };
