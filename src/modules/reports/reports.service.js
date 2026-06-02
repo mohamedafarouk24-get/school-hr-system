@@ -58,45 +58,45 @@ const generateAttendanceReport =
       };
     }
 
-    console.log(
-      "Filters:",
-      filters
-    );
+    
 
-    console.log(
-      "Query:",
-      query
-    );
+    const lateCount =
+  attendances.filter(
+    a => a.lateMinutes > 0
+  ).length;
 
-    const count =
-      await Attendance.countDocuments();
+const earlyLeaveCount =
+  attendances.filter(
+    a => a.earlyLeaveMinutes > 0
+  ).length;
 
-    console.log(
-      "Attendance Count:",
-      count
-    );
+const overtimeCount =
+  attendances.filter(
+    a => a.overtimeMinutes > 0
+  ).length;
 
-    const attendances =
-      await Attendance.find(
-        query
-      );
+return {
 
-    console.log(
-      "Attendance Result:",
-      attendances.length
-    );
+  summary: {
 
-    return {
+    totalRecords:
+      attendances.length,
 
-      totalRecords:
-        attendances.length,
+    lateCount,
 
-      filters,
+    earlyLeaveCount,
 
-      attendances
-    };
+    overtimeCount
+  },
+
+  filters,
+
+  records:
+    attendances
+};
 };
 
 module.exports = {
-  generateAttendanceReport
+  generateAttendanceReport,
+    
 };
