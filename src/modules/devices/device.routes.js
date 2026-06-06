@@ -3,7 +3,9 @@ const router =
 
 const {
   createDevice,
-  getDevices
+  getDevices,
+  updateDevice,
+  deleteDevice
 } = require(
   "./device.controller"
 );
@@ -22,6 +24,19 @@ router.get(
   auth,
   getDevices
 );
+
+router.put(
+  "/:id",
+  auth,
+  updateDevice
+);
+
+router.delete(
+  "/:id",
+  auth,
+  deleteDevice
+);
+
 
 module.exports =
   router;

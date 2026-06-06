@@ -22,6 +22,16 @@ const deviceSchema = new mongoose.Schema({
     default: 4370
   },
 
+  serialNumber: {
+  type: String,
+  default: null
+},
+
+macAddress: {
+  type: String,
+  default: null
+},
+
   location: {
     type: String
   },
