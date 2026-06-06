@@ -19,6 +19,12 @@ const reportsRoutes =
 require(
   "./modules/reports/reports.routes"
 );
+
+const deviceRoutes =
+  require(
+    "./modules/devices/device.routes"
+  );
+
 const app = express();
 
 app.use(express.json());
@@ -42,6 +48,10 @@ app.use(
 app.use(
   "/api/reports",
   reportsRoutes
+);
+app.use(
+  "/api/devices",
+  deviceRoutes
 );
 app.get("/", (req, res) => {
   res.send("HR System API Running");
