@@ -73,6 +73,12 @@ const attendanceSchema = new mongoose.Schema(
       default: 0
     },
 
+    deviceId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Device",
+  default: null
+},
+
     // Source
     source: {
       type: String,
