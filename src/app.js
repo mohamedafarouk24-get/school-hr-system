@@ -25,6 +25,11 @@ const deviceRoutes =
     "./modules/devices/device.routes"
   );
 
+  const departmentRoutes =
+require(
+  "./modules/departments/department.routes"
+);
+
 const app = express();
 
 app.use(express.json());
@@ -53,6 +58,12 @@ app.use(
   "/api/devices",
   deviceRoutes
 );
+
+app.use(
+  "/api/departments",
+  departmentRoutes
+);
+
 app.get("/", (req, res) => {
   res.send("HR System API Running");
 });
