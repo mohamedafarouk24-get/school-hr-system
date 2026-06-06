@@ -5,7 +5,8 @@ const {
   createDevice,
   getDevices,
   updateDevice,
-  deleteDevice
+  deleteDevice,
+  testConnection
 } = require(
   "./device.controller"
 );
@@ -37,6 +38,11 @@ router.delete(
   deleteDevice
 );
 
+router.post(
+  "/:id/test-connection",
+  auth,
+  testConnection
+);
 
 module.exports =
   router;
