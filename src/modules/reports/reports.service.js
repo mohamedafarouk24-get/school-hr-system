@@ -10,16 +10,17 @@ const generateAttendanceReport =
   async (filters) => {
 
     const {
-      from,
-      to,
-      employeeId,
-      department,
-      position,
-      lateOnly,
-      shiftId,
-      earlyLeaveOnly,
-      overtimeOnly
-    } = filters;
+  from,
+  to,
+  employeeId,
+  departmentId,
+  department,
+  position,
+  lateOnly,
+  shiftId,
+  earlyLeaveOnly,
+  overtimeOnly
+} = filters;
 
     const query = {};
 
@@ -63,6 +64,26 @@ if (shiftId) {
       query.employeeId =
         employeeId;
     }
+    // =========================
+// Department Filter
+// =========================
+
+if (departmentId) {
+
+  const employees =
+    await Employee.find({
+      departmentId
+    }).select("_id");
+
+  const employeeIds =
+    employees.map(
+      employee => employee._id
+    );
+
+  query.employeeId = {
+    $in: employeeIds
+  };
+}
 
     // =========================
     // Late Employees Only

@@ -1,6 +1,9 @@
 const Employee = require("./employee.model");
 const Shift = require("../shifts/shift.model"
 );
+const Department = require(
+  "../departments/department.model"
+);
   
 
 const createEmployee = async (req, res) => {
@@ -8,18 +11,38 @@ const createEmployee = async (req, res) => {
   try {
 
     const {
-  firstName,
-  lastName,
-  email,
-  phone,
+      firstName,
+      lastName,
+      email,
+      phone,
 
-  nationalId,
-  religion,
+      nationalId,
+      religion,
 
-  department,
-  position,
-  salary
-} = req.body;
+      department,
+      departmentId,
+
+      position,
+      salary
+    } = req.body;
+
+    // Validate Department
+    if (departmentId) {
+
+      const departmentExists =
+        await Department.findById(
+          departmentId
+        );
+
+      if (!departmentExists) {
+
+        return res.status(404).json({
+
+          message:
+            "Department not found"
+        });
+      }
+    }
 
     const employeeCount =
       await Employee.countDocuments();
@@ -27,36 +50,46 @@ const createEmployee = async (req, res) => {
     const employeeId =
       `EMP-${1000 + employeeCount + 1}`;
 
-    const employee = await Employee.create({
+    const employee =
+      await Employee.create({
 
-      employeeId,
+        employeeId,
 
-      firstName,
-      lastName,
-      email,
-      phone,
+        firstName,
+        lastName,
+        email,
+        phone,
 
-      nationalId,
-       religion,
-       
-      department,
-      position,
-      salary,
+        nationalId,
+        religion,
 
-      schoolId: req.user.schoolId,
+        department,
+        departmentId,
 
-      createdBy: req.user._id
-    });
+        position,
+        salary,
+
+        schoolId:
+          req.user.schoolId,
+
+        createdBy:
+          req.user._id
+      });
 
     res.status(201).json({
-      message: "Employee created successfully",
+
+      message:
+        "Employee created successfully",
+
       employee
     });
 
   } catch (error) {
 
     res.status(500).json({
-      message: error.message
+
+      message:
+        error.message
     });
   }
 };

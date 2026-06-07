@@ -46,6 +46,12 @@ religion: {
     department: {
       type: String
     },
+    departmentId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Department",
+  default: null
+},
+
 
     position: {
       type: String
